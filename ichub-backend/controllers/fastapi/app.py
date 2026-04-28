@@ -42,7 +42,43 @@ startup_logger = logging.getLogger("app.startup")
 async def lifespan(app: FastAPI):
     """Run startup tasks before serving requests."""
     _sync_digital_twin_event_asset_on_startup()
-    yield
+
+    if ConfigManager.get_config("addons.mcp_kit.enabled", True):
+        # TODO check this part and see if lifespan is called twice
+        import asyncio
+        from contextlib import AsyncExitStack
+        from managers.addons_service.mcp_kit.v1.server import mcp_http_app
+        from managers.addons_service.mcp_kit.v1.session import session_store
+
+        eviction_interval: int = ConfigManager.get_config(
+            "addons.mcp_kit.session_eviction_interval_seconds", 300
+        )
+
+        async def _eviction_loop() -> None:
+            while True:
+                await asyncio.sleep(eviction_interval)
+                try:
+                    n = session_store.evict_expired()
+                    if n:
+                        startup_logger.debug("MCP session eviction: removed %d expired session(s).", n)
+                except Exception:
+                    startup_logger.exception("Unexpected error during MCP session eviction sweep.")
+
+        async with AsyncExitStack() as stack:
+            await stack.enter_async_context(mcp_http_app.lifespan(mcp_http_app))
+            eviction_task = asyncio.create_task(_eviction_loop(), name="mcp-session-eviction")
+            try:
+                yield
+            finally:
+                eviction_task.cancel()
+                try:
+                    await eviction_task
+                except asyncio.CancelledError:
+                    # Expected: cancelling the task above raises CancelledError
+                    # when we await it. Nothing to clean up, so swallow it.
+                    pass
+    else:
+        yield
 
 
 def _sync_digital_twin_event_asset_on_startup() -> None:
@@ -151,6 +187,10 @@ tags_metadata = [
     {
         "name": "PCF KIT Microservices",
         "description": "Provider-side PCF KIT endpoints"
+    },
+    {
+        "name": "MCP KIT Microservices",
+        "description": "MCP KIT endpoints — AI tool surface over Model Context Protocol (enabled by default; disable via addons.mcp_kit.enabled)"
     }
 ]
 
@@ -232,6 +272,22 @@ v1_router.include_router(addons.router)
 # Include the API version 1 router into the main app
 app.include_router(v1_router)
 
+# Mount the MCP KIT ASGI sub-application when the add-on is enabled.
+# The REST router (health, audit) is included via addons.py above.
+# The FastMCP streamable-HTTP transport needs a top-level mount so that
+# MCP clients (Claude Desktop, Copilot) can reach it without the /api/v1 prefix.
+if ConfigManager.get_config("addons.mcp_kit.enabled", True):
+    from managers.addons_service.mcp_kit.v1.server import mcp_http_app, _auth_provider
+    _mcp_mount_path = ConfigManager.get_config("addons.mcp_kit.mount_path", "/addons/mcp-kit/mcp")
+    if ConfigManager.get_config("authorization.enabled", False) and _auth_provider is None:
+        import logging as _logging
+        _logging.getLogger(__name__).error(
+            "[MCP KIT] Authorization is enabled but no auth provider could be built. "
+            "The MCP endpoint will NOT be mounted to prevent unauthenticated access."
+        )
+    else:
+        app.mount(_mcp_mount_path, mcp_http_app)
+
 
 def custom_openapi():
     """
@@ -269,7 +325,8 @@ def custom_openapi():
                 "Add-Ons Microservices",
                 "EcoPass KIT Microservices",
                 "EcoPass KIT Consumer Microservices",
-                "PCF KIT Microservices"
+                "PCF KIT Microservices",
+                "MCP KIT Microservices"
             ],
         },
     ]

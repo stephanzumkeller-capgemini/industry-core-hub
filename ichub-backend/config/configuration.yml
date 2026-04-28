@@ -431,3 +431,34 @@ provider:
       timeout: 30
       # -- SSL certificate verification
       verify_ssl: true
+
+# -- Add-on KIT configuration
+addons:
+  # -- MCP KIT: exposes IC-Hub dataspace capabilities as MCP tools for AI clients
+  # -- (Claude Desktop, Microsoft Copilot Studio, custom agents).
+  mcp_kit:
+    # -- Set to true to mount the FastMCP server at mount_path.
+    enabled: true
+    # -- Set to true to enable OAuth 2.1 (Keycloak) authentication for the MCP endpoint.
+    # -- When false, only the API-key Bearer fallback is used (or no auth if authorization.enabled is false).
+    oauth_enabled: true
+    # -- Expected JWT audience for MCP tokens. Defaults to authorization.keycloak.client_id.
+    # -- Set explicitly to restrict which Keycloak clients may call the MCP endpoint.
+    expected_audience: null
+    # -- ASGI mount path for the FastMCP streamable-HTTP transport.
+    mount_path: /addons/mcp-kit/mcp
+    # -- When true, write tools return a preview on the first call and execute
+    # -- only on a second call with identical arguments.
+    require_confirmation_for_writes: true
+    # -- Idle TTL for in-process MCP sessions (seconds).
+    session_ttl_seconds: 7200
+    # -- Interval between idle-session eviction sweeps (seconds).
+    session_eviction_interval_seconds: 300
+    # -- Optional Redis URL for session storage in multi-replica deployments.
+    # -- Leave null to use the default in-process store.
+    redis_url: null
+    audit:
+      # -- Expose GET /addons/mcp-kit/audit for admin-role users.
+      # -- Disabled by default: this endpoint returns cross-user audit data.
+      # -- Enable only after adding appropriate role-based access controls.
+      expose_admin_endpoint: false
