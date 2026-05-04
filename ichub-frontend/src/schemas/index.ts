@@ -35,6 +35,13 @@ import { loadSchemas } from './schemaLoader';
 import digitalProductPassportSchema from './DigitalProductPassport-schema.json';
 import UsTariffInformationSchema from './UsTariffInformation-schema.json';
 import PcfSchema from './Pcf-schema.json';
+import idtaBatteryPassDigitalNameplate from './idta-BatteryPassDigitalNameplate-schema.json';
+import idtaBatteryPassCarbonFootprint from './idta-BatteryPassCarbonFootprint-schema.json';
+import idtaBatteryPassCircularity from './idta-BatteryPassCircularity-schema.json';
+import idtaBatteryPassHandoverDocumentation from './idta-BatteryPassHandoverDocumentation-schema.json';
+import idtaBatteryPassMaterialComposition from './idta-BatteryPassMaterialComposition-schema.json';
+import idtaBatteryPassProductCondition from './idta-BatteryPassProductCondition-schema.json';
+import idtaBatteryPassTechnicalData from './idta-BatteryPassTechnicalData-schema.json';
 import { JSONSchema } from './json-schema-interpreter';
 
 export interface SchemaMetadata {
@@ -76,7 +83,14 @@ export interface SchemaDefinition<T = any> {
 const schemasToLoad = [
   digitalProductPassportSchema as JSONSchema,
   UsTariffInformationSchema as JSONSchema,
-  PcfSchema as JSONSchema
+  PcfSchema as JSONSchema,
+  idtaBatteryPassDigitalNameplate as JSONSchema,
+  idtaBatteryPassCarbonFootprint as JSONSchema,
+  idtaBatteryPassCircularity as JSONSchema,
+  idtaBatteryPassHandoverDocumentation as JSONSchema,
+  idtaBatteryPassMaterialComposition as JSONSchema,
+  idtaBatteryPassProductCondition as JSONSchema,
+  idtaBatteryPassTechnicalData as JSONSchema,
   // Add more schemas here:
   // serialPartSchema as JSONSchema,
   // batchSchema as JSONSchema,

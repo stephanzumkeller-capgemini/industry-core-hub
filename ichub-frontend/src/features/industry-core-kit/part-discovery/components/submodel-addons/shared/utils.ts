@@ -160,15 +160,15 @@ export function isValidSemanticId(semanticId: string): boolean {
  * @returns Array of versions sorted in ascending order
  */
 export function getSupportedVersionsForModel(
-  semanticIds: string[], 
-  namespace: string, 
+  semanticIds: string[],
+  namespace: string,
   modelName: string
 ): string[] {
   return semanticIds
     .map(parseSemanticId)
-    .filter((parsed): parsed is ParsedSemanticId => 
-      parsed !== null && 
-      parsed.namespace === namespace && 
+    .filter((parsed): parsed is ParsedSemanticId =>
+      parsed !== null &&
+      parsed.namespace === namespace &&
       parsed.fragment === modelName
     )
     .map(parsed => `${parsed.version.major}.${parsed.version.minor}.${parsed.version.patch}`)
@@ -178,4 +178,12 @@ export function getSupportedVersionsForModel(
       const versionB = { major: parseInt(b.split('.')[0]), minor: parseInt(b.split('.')[1]), patch: parseInt(b.split('.')[2]) };
       return compareVersions(versionA, versionB);
     });
+}
+
+/**
+ * Unwraps submodel data that may arrive as a single object or a single-element array.
+ * Some backends wrap the submodel payload in an array; this normalises both forms.
+ */
+export function unwrapSubmodelData<T>(data: T | T[]): T {
+  return Array.isArray(data) ? data[0] : data;
 }

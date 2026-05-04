@@ -61,6 +61,13 @@ import { submodelAddonRegistry } from '../submodel-addons/shared/registry';
 import { usTariffInformationAddon } from '../submodel-addons/us-tariff-information/addon';
 import { partTypeInformationAddon } from '../submodel-addons/part-type-information/addon';
 import { serialPartAddon } from '../submodel-addons/serial-part/addon';
+import { batteryPassDigitalNameplateAddon } from '../submodel-addons/battery-pass-digital-nameplate/addon';
+import { batteryPassCarbonFootprintAddon } from '../submodel-addons/battery-pass-carbon-footprint/addon';
+import { batteryPassCircularityAddon } from '../submodel-addons/battery-pass-circularity/addon';
+import { batteryPassHandoverDocumentationAddon } from '../submodel-addons/battery-pass-handover-documentation/addon';
+import { batteryPassMaterialCompositionAddon } from '../submodel-addons/battery-pass-material-composition/addon';
+import { batteryPassProductConditionAddon } from '../submodel-addons/battery-pass-product-condition/addon';
+import { batteryPassTechnicalDataAddon } from '../submodel-addons/battery-pass-technical-data/addon';
 
 interface SubmodelViewerProps {
   open: boolean;
@@ -368,6 +375,27 @@ export const SubmodelViewer: React.FC<SubmodelViewerProps> = ({
     }
     if (!submodelAddonRegistry.getAddon('serial-part')) {
       submodelAddonRegistry.register(serialPartAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
+    }
+    if (!submodelAddonRegistry.getAddon('battery-pass-digital-nameplate')) {
+      submodelAddonRegistry.register(batteryPassDigitalNameplateAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
+    }
+    if (!submodelAddonRegistry.getAddon('battery-pass-carbon-footprint')) {
+      submodelAddonRegistry.register(batteryPassCarbonFootprintAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
+    }
+    if (!submodelAddonRegistry.getAddon('battery-pass-circularity')) {
+      submodelAddonRegistry.register(batteryPassCircularityAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
+    }
+    if (!submodelAddonRegistry.getAddon('battery-pass-handover-documentation')) {
+      submodelAddonRegistry.register(batteryPassHandoverDocumentationAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
+    }
+    if (!submodelAddonRegistry.getAddon('battery-pass-material-composition')) {
+      submodelAddonRegistry.register(batteryPassMaterialCompositionAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
+    }
+    if (!submodelAddonRegistry.getAddon('battery-pass-product-condition')) {
+      submodelAddonRegistry.register(batteryPassProductConditionAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
+    }
+    if (!submodelAddonRegistry.getAddon('battery-pass-technical-data')) {
+      submodelAddonRegistry.register(batteryPassTechnicalDataAddon as unknown as import('../submodel-addons/shared/types').VersionedSubmodelAddon);
     }
   }, []);
 
