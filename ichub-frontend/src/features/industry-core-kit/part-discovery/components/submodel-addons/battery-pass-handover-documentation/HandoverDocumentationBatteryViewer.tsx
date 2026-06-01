@@ -45,6 +45,7 @@ export const HandoverDocumentationBatteryViewer: React.FC<SubmodelAddonProps<Han
   semanticId,
 }) => {
   const data = unwrapSubmodelData<HandoverDocumentation>(rawData);
+  if (!data) return null;
 
   return (
     <SubmodelAddonWrapper

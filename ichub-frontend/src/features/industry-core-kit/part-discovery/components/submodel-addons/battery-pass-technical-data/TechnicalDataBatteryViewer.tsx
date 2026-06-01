@@ -55,6 +55,7 @@ export const TechnicalDataBatteryViewer: React.FC<SubmodelAddonProps<TechnicalDa
   semanticId,
 }) => {
   const data = unwrapSubmodelData<TechnicalData>(rawData);
+  if (!data) return null;
   const generalInfo = data.GeneralInformation;
   const techAreas = data.TechnicalPropertyAreas;
 

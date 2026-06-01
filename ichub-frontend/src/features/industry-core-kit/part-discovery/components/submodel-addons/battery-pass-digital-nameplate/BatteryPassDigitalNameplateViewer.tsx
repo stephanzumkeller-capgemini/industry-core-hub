@@ -72,6 +72,7 @@ export const BatteryPassDigitalNameplateViewer: React.FC<SubmodelAddonProps<Batt
   semanticId,
 }) => {
   const data = unwrapSubmodelData<BatteryPassDigitalNameplate>(rawData);
+  if (!data) return null;
   const addr = data.AddressInformation;
 
   const hasComplianceDocs =

@@ -87,6 +87,7 @@ export const ProductConditionBatteryViewer: React.FC<SubmodelAddonProps<ProductC
   semanticId,
 }) => {
   const data = unwrapSubmodelData<ProductCondition>(rawData);
+  if (!data) return null;
 
   return (
     <SubmodelAddonWrapper

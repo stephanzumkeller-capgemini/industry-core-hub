@@ -184,6 +184,7 @@ export function getSupportedVersionsForModel(
  * Unwraps submodel data that may arrive as a single object or a single-element array.
  * Some backends wrap the submodel payload in an array; this normalises both forms.
  */
-export function unwrapSubmodelData<T>(data: T | T[]): T {
-  return Array.isArray(data) ? data[0] : data;
+export function unwrapSubmodelData<T>(data: T | T[]): T | undefined {
+  if (!Array.isArray(data)) return data;
+  return data.length > 0 ? data[0] : undefined;
 }

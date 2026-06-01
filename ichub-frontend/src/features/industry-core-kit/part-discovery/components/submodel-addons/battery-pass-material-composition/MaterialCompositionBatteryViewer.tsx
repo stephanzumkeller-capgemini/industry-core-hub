@@ -55,6 +55,7 @@ export const MaterialCompositionBatteryViewer: React.FC<SubmodelAddonProps<Mater
   semanticId,
 }) => {
   const data = unwrapSubmodelData<MaterialComposition>(rawData);
+  if (!data) return null;
 
   return (
     <SubmodelAddonWrapper

@@ -41,11 +41,14 @@ import { SubmodelAddonWrapper } from '../BaseAddon';
 import { InfoRow } from '../battery-pass-shared/InfoRow';
 import { CarbonFootprintBattery } from './types';
 
+const isHttpUrl = (s: string) => /^https?:\/\//i.test(s);
+
 export const CarbonFootprintBatteryViewer: React.FC<SubmodelAddonProps<CarbonFootprintBattery>> = ({
   data: rawData,
   semanticId,
 }) => {
   const data = unwrapSubmodelData<CarbonFootprintBattery>(rawData);
+  if (!data) return null;
 
   return (
     <SubmodelAddonWrapper
@@ -113,17 +116,27 @@ export const CarbonFootprintBatteryViewer: React.FC<SubmodelAddonProps<CarbonFoo
                     Public Carbon Footprint Studies
                   </Typography>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                    {pcf.WebLinkToPublicCarbonFootprintStudy.map((link) => (
-                      <Link
-                        key={link}
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{ fontSize: '0.85rem', fontFamily: 'monospace', wordBreak: 'break-all' }}
-                      >
-                        {link}
-                      </Link>
-                    ))}
+                    {pcf.WebLinkToPublicCarbonFootprintStudy.map((link) =>
+                      isHttpUrl(link) ? (
+                        <Link
+                          key={link}
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{ fontSize: '0.85rem', fontFamily: 'monospace', wordBreak: 'break-all' }}
+                        >
+                          {link}
+                        </Link>
+                      ) : (
+                        <Chip
+                          key={link}
+                          label={link}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontFamily: 'monospace', fontSize: '0.75rem', maxWidth: '100%' }}
+                        />
+                      )
+                    )}
                   </Box>
                 </>
               )}

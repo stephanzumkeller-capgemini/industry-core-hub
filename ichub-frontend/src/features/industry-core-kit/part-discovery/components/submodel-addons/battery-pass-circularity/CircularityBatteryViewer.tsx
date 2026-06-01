@@ -44,11 +44,17 @@ import { SubmodelAddonWrapper } from '../BaseAddon';
 import { InfoRow } from '../battery-pass-shared/InfoRow';
 import { Circularity, getMultiLangValue } from './types';
 
+function toPercent(v: number): number {
+  const pct = v > 1 ? v : v * 100;
+  return Math.max(0, Math.min(pct, 100));
+}
+
 export const CircularityBatteryViewer: React.FC<SubmodelAddonProps<Circularity>> = ({
   data: rawData,
   semanticId,
 }) => {
   const data = unwrapSubmodelData<Circularity>(rawData);
+  if (!data) return null;
 
   return (
     <SubmodelAddonWrapper
@@ -68,13 +74,13 @@ export const CircularityBatteryViewer: React.FC<SubmodelAddonProps<Circularity>>
               <Box sx={{ flex: 1 }}>
                 <LinearProgress
                   variant="determinate"
-                  value={Math.min(data.RenewableContent * 100, 100)}
+                  value={toPercent(data.RenewableContent)}
                   color="success"
                   sx={{ height: 10, borderRadius: 5 }}
                 />
               </Box>
               <Typography variant="body1" sx={{ fontWeight: 600, minWidth: 60 }}>
-                {(data.RenewableContent * 100).toFixed(1)}%
+                {toPercent(data.RenewableContent).toFixed(1)}%
               </Typography>
             </Box>
           </CardContent>
@@ -101,11 +107,11 @@ export const CircularityBatteryViewer: React.FC<SubmodelAddonProps<Circularity>>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <LinearProgress
                               variant="determinate"
-                              value={Math.min(rc.PreConsumerShare * 100, 100)}
+                              value={toPercent(rc.PreConsumerShare)}
                               color="info"
                               sx={{ flex: 1, height: 8, borderRadius: 4 }}
                             />
-                            <Typography variant="body2">{(rc.PreConsumerShare * 100).toFixed(1)}%</Typography>
+                            <Typography variant="body2">{toPercent(rc.PreConsumerShare).toFixed(1)}%</Typography>
                           </Box>
                         </Grid2>
                         <Grid2 size={{ xs: 12, sm: 6 }}>
@@ -113,11 +119,11 @@ export const CircularityBatteryViewer: React.FC<SubmodelAddonProps<Circularity>>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <LinearProgress
                               variant="determinate"
-                              value={Math.min(rc.PostConsumerShare * 100, 100)}
+                              value={toPercent(rc.PostConsumerShare)}
                               color="success"
                               sx={{ flex: 1, height: 8, borderRadius: 4 }}
                             />
-                            <Typography variant="body2">{(rc.PostConsumerShare * 100).toFixed(1)}%</Typography>
+                            <Typography variant="body2">{toPercent(rc.PostConsumerShare).toFixed(1)}%</Typography>
                           </Box>
                         </Grid2>
                       </Grid2>
