@@ -41,8 +41,23 @@ COPY requirements.txt .
 ## Install application requirements.
 ## --mount=type=cache keeps pip's download cache outside the image layer,
 ## so changed packages are re-downloaded without re-downloading everything.
+
+# --- BEGIN: Custom pip install to resolve httpx version conflicts ---
+# TODO fix dependency hell
+# 1. Install fastmcp and compatible httpx first, ignoring dependencies
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install --break-system-packages -r ./requirements.txt
+    pip3 install --no-cache-dir --break-system-packages fastmcp==3.2.4 'httpx>=0.28.1'
+# 2. Install tractusx-sdk and keycloak, ignoring their dependencies (so they don't downgrade httpx)
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip3 install --no-cache-dir --break-system-packages tractusx-sdk==0.8.0rc2 keycloak==3.1.5 --no-deps
+# 3. Install python-keycloak (compatible with httpx>=0.28.1)
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip3 install --no-cache-dir --break-system-packages python-keycloak==4.7.3 --no-deps
+# 4. Install the rest of the requirements, excluding the above and httpx, to avoid conflicts
+RUN --mount=type=cache,target=/root/.cache/pip \
+    grep -v -E '^(fastmcp|tractusx[-_]sdk|keycloak|python[-_]keycloak|httpx)' requirements.txt > requirements.rest.txt \
+    && pip3 install --no-cache-dir --break-system-packages -r requirements.rest.txt
+# --- END: Custom pip install ---
 
 ## Copy the rest of the project (code changes do not invalidate the dep layer above)
 COPY ./ ./

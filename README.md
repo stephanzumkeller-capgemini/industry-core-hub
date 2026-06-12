@@ -661,10 +661,20 @@ docker compose up -d
 ```
 
 **Backend**
+Due to dependency conflicts between `fastmcp` (which requires `httpx>=0.28.1`) and `keycloak`, `tractusx-sdk` (which require `httpx<0.28`), we need to install the dependencies in a specific order while ignoring dependencies to avoid conflicts:
+TODO check for possible dependency resolution
 ```sh
 cd ichub-backend/
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+# 1. Install fastmcp and compatible httpx first, ignoring dependencies
+pip install --break-system-packages fastmcp==3.2.4 'httpx>=0.28.1'
+# 2. Install tractusx-sdk and keycloak, ignoring their dependencies (so they don't downgrade httpx)
+pip install --break-system-packages tractusx-sdk==0.7.1 keycloak==3.1.5 --no-deps
+# 3. Install python-keycloak (compatible with httpx>=0.28.1)
+pip install --break-system-packages python-keycloak==4.7.3 --no-deps
+# 4. Install the rest of the requirements, excluding the above and httpx, to avoid conflicts
+grep -v -E '^(fastmcp|tractusx-sdk|keycloak|python-keycloak|httpx)' requirements.txt > requirements.rest.txt \
+  && pip install --break-system-packages -r requirements.rest.txt
 # Edit ichub-backend/config/configuration.yml with your settings
 python -m main --host 0.0.0.0 --port 8000
 # Swagger UI: http://localhost:8000/docs

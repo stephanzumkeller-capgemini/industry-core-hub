@@ -43,6 +43,7 @@ import {
   CloudUpload,
   Inbox
 } from '@mui/icons-material';
+import McpIcon from '@/features/mcp-kit/McpIcon';
 import { KitFeature } from '@/features/kit-features/types';
 import { FeatureConfig } from '@/types/routing';
 
@@ -55,6 +56,7 @@ import PcfKitImage from '@/features/kit-features/assets/kit-images/pcf-kit.svg';
 import DataChainKitImage from '@/features/kit-features/assets/kit-images/data-chain-kit.svg';
 import DcmKitImage from '@/features/kit-features/assets/kit-images/dcm-kit.svg';
 import TraceabilityKitImage from '@/features/kit-features/assets/kit-images/traceability-kit.svg';
+import McpKitImage from '@/features/kit-features/assets/kit-images/mcp-kit.svg';
 
 // Import feature modules
 import { catalogManagementFeature } from '@/features/industry-core-kit/catalog-management/routes';
@@ -66,6 +68,7 @@ import { passportProvisionFeature } from '@/features/eco-pass-kit/passport-provi
 import { pcfRequestFeature } from '@/features/pcf-kit/pcf-request/routes';
 import { pcfExchangeFeature } from '@/features/pcf-kit/pcf-exchange/routes';
 import { pcfManagementFeature } from '@/features/pcf-kit/pcf-management/routes';
+import { mcpKitFeature } from '@/features/mcp-kit/routes';
 
 /**
  * Hook that returns translated KIT configurations.
@@ -262,6 +265,30 @@ export const useTranslatedKits = (): KitFeature[] => {
       version: '0.0.0',
       domain: 'industry-core',
       documentation: 'https://eclipse-tractusx.github.io/docs-kits/kits/Traceability%20Kit/Adoption%20View%20Traceability%20Kit'
+    },
+    {
+      id: 'mcp',
+      name: t('items.mcp.name'),
+      description: t('items.mcp.description'),
+      status: 'available',
+      icon: <McpIcon />,
+      image: McpKitImage,
+      features: [
+        {
+          module: mcpKitFeature,
+          id: 'mcp-tools',
+          name: t('items.mcp.features.mcpTools.name'),
+          description: t('items.mcp.features.mcpTools.description'),
+          icon: <McpIcon />,
+          enabled: false,
+          default: false
+        }
+      ],
+      domain: 'dataspace-foundation',
+      version: '0.0.1',
+      createdAt: '2026-05-19',
+      lastUpdated: '2026-05-19',
+      documentation: 'https://eclipse-tractusx.github.io/docs-kits'
     }
   ] as KitFeature[], [t]);
 };

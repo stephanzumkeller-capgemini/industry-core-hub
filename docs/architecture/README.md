@@ -68,6 +68,7 @@ SPDX-License-Identifier: CC-BY-4.0
   - [Process View](#process-view)
   - [Development View](#development-view)
   - [Interfaces](#interfaces)
+  - [MCP KIT Add-on](#mcp-kit-add-on)
   - [NOTICE](#notice)
 
 
@@ -85,6 +86,7 @@ SPDX-License-Identifier: CC-BY-4.0
 - EDC Policy Acceptance
 - Notification Send
 - Notification Receive
+- MCP Tool Surface for AI Clients (via MCP KIT add-on)
 
 # Requirements
 
@@ -170,6 +172,10 @@ Following the structure that will be defined for the KITs a layered Architecture
 ## Interfaces
 
 ![Interfaces](./media/Interfaces.drawio.svg)
+
+## MCP KIT Add-on
+
+The MCP KIT is a Layer 4 add-on that exposes IC-Hub's dataspace capabilities as MCP tools for AI clients. It is mounted as a FastMCP ASGI sub-application at `/addons/mcp-kit/mcp` and authenticates via OAuth 2.1 (Keycloak DCR) or API-key Bearer token. For full architectural details, see [ADR 0005 — MCP KIT Add-On](./decision-records/0005-mcp-kit-addon.md). For configuration, client setup, and the tool reference, see the [MCP KIT Guide](../developer/MCP-KIT-GUIDE.md).
 
 ## NOTICE
 

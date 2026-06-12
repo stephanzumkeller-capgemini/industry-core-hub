@@ -22,6 +22,7 @@
 
 from fastapi import APIRouter, Depends
 from controllers.fastapi.routers.authentication.auth_api import get_authentication_dependency
+from managers.config.config_manager import ConfigManager
 from .ecopass_kit import ecopass_kit
 from .pcf_kit import pcf_kit
 
@@ -33,3 +34,7 @@ router = APIRouter(
 
 router.include_router(ecopass_kit.router)
 router.include_router(pcf_kit.router)
+
+if ConfigManager.get_config("addons.mcp_kit.enabled", True):
+    from .mcp_kit import mcp_kit
+    router.include_router(mcp_kit.router)
