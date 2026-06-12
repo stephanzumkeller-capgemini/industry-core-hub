@@ -621,7 +621,6 @@ const ToolCard: React.FC<{ tool: ToolDef }> = ({ tool }) => (
 
 const McpKitPage: React.FC = () => {
   const [connectTab, setConnectTab] = useState(0);
-  const hostname = window.location.host;
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -748,7 +747,7 @@ const McpKitPage: React.FC = () => {
                       code={`{
   "mcpServers": {
     "ichub": {
-      "url": "https://${hostname}/addons/mcp-kit/mcp",
+      "url": "https://<IC-HUB-HOSTNAME>/addons/mcp-kit/mcp",
       "headers": {
         "Authorization": "Bearer your-api-key"
       }
@@ -772,7 +771,7 @@ const McpKitPage: React.FC = () => {
                       language="bash"
                       code={`claude mcp add ichub \\
   --header "Authorization: Bearer your-api-key" \\
-  https://${hostname}/addons/mcp-kit/mcp`}
+  https://<IC-HUB-HOSTNAME>/addons/mcp-kit/mcp`}
                     />
                     <Typography variant="body2" sx={{ mt: 1.5, color: 'text.secondary' }}>
                       Verify the server is connected:
@@ -793,7 +792,7 @@ const McpKitPage: React.FC = () => {
   "servers": {
     "ichub": {
       "type": "http",
-      "url": "https://${hostname}/addons/mcp-kit/mcp",
+      "url": "https://<IC-HUB-HOSTNAME>/addons/mcp-kit/mcp",
       "headers": {
         "Authorization": "Bearer your-api-key"
       }
@@ -815,7 +814,7 @@ const McpKitPage: React.FC = () => {
     "servers": {
       "ichub": {
         "type": "http",
-        "url": "https://${hostname}/addons/mcp-kit/mcp",
+        "url": "https://<IC-HUB-HOSTNAME>/addons/mcp-kit/mcp",
         "headers": {
           "Authorization": "Bearer your-api-key"
         }
