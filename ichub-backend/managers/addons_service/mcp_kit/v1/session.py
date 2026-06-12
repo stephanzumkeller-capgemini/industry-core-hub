@@ -68,9 +68,20 @@ class SessionStore(ABC):
         """
 
     def set_pending_confirmation(self, session_id: str, pending: PendingConfirmation) -> None:
-        """Stage a write-tool preview for later confirmation."""
+        """Stage a write-tool preview for later confirmation.
+
+        Inserts (or replaces) the entry keyed by ``pending.args_hash``.
+        After insertion, the oldest entries are evicted until the dict size is
+        at or below ``addons.mcp_kit.max_pending_confirmations`` (default 50).
+        This bounds memory in sessions where a client previews many distinct
+        write calls without confirming them.
+        """
         state = self.get_or_create(session_id)
         state.pending_confirmations[pending.args_hash] = pending
+        # Evict oldest entries (FIFO via dict insertion order) beyond the cap.
+        cap = max(1, int(ConfigManager.get_config("addons.mcp_kit.max_pending_confirmations", 50)))
+        while len(state.pending_confirmations) > cap:
+            state.pending_confirmations.pop(next(iter(state.pending_confirmations)))
         self.put(session_id, state)
 
     def get_pending_confirmation(self, session_id: str, args_hash: str) -> PendingConfirmation | None:

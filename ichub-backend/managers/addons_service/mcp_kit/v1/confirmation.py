@@ -11,7 +11,9 @@
 #   - First call to a write tool returns a preview DTO and stages the action
 #     in the session keyed by hash(tool_name, normalized_args).
 #   - Second call with identical args executes the staged action.
-#   - Second call with different args discards the previous stage and previews again.
+#   - Calls with different args are staged independently, keyed by their own
+#     hash; they coexist as separate pending confirmations and each executes
+#     on a later call with identical args.
 # When the flag is false, write tools execute on the first call.
 
 from __future__ import annotations

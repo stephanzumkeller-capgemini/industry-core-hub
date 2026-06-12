@@ -457,6 +457,11 @@ addons:
     # -- Optional Redis URL for session storage in multi-replica deployments.
     # -- Leave null to use the default in-process store.
     redis_url: null
+    # -- Maximum number of staged write-tool previews retained per session.
+    # -- Oldest entries (by insertion order) are evicted when the cap is exceeded.
+    # -- This bounds memory when a client previews many distinct write calls
+    # -- without ever confirming them (each coexists in pending_confirmations).
+    max_pending_confirmations: 50
     audit:
       # -- Expose GET /addons/mcp-kit/audit for admin-role users.
       # -- Disabled by default: this endpoint returns cross-user audit data.
