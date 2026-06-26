@@ -602,12 +602,61 @@ provider:
               rightOperand: "active"
         prohibitions: []
         obligations: []
+  uniqueIdPush:
+    hostname: "http://localhost:9000"
+    apiPath: /v1/uniqueidpush
+    sendOnShare: false
+    uri: ""
+    asset_config:
+      dct_type: "https://w3id.org/catenax/taxonomy#UniqueIdPushConnectToParentNotification"
+      # existing_asset_id: <unique-id-push-asset> # -- In case an existing Unique ID Push asset wants to be used specify here the id, otherwise it will be created based on the url, if it not exists it will be created
+    policy:
+      usage:
+        context:
+          - "https://w3id.org/catenax/2025/9/policy/odrl.jsonld"
+          - "https://w3id.org/catenax/2025/9/policy/context.jsonld"
+          - "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+        permissions:
+          - action: "use"
+            constraint:
+              and:
+                - leftOperand: "https://w3id.org/catenax/2025/9/policy/FrameworkAgreement"
+                  operator: "eq"
+                  rightOperand: "DataExchangeGovernance:1.0"
+                - leftOperand: "https://w3id.org/catenax/2025/9/policy/Membership"
+                  operator: "eq"
+                  rightOperand: "active"
+                - leftOperand: "https://w3id.org/catenax/2025/9/policy/UsagePurpose"
+                  operator: "isAnyOf"
+                  rightOperand: "cx.core.industrycore:1"
+        prohibitions: []
+        obligations: []
+      access:
+        context:
+          - "https://w3id.org/catenax/2025/9/policy/odrl.jsonld"
+          - "https://w3id.org/catenax/2025/9/policy/context.jsonld"
+          - "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+        permissions:
+          - action: "access"
+            constraint:
+              leftOperand: "https://w3id.org/catenax/2025/9/policy/Membership"
+              operator: "eq"
+              rightOperand: "active"
+        prohibitions: []
+        obligations: []
   pcfExchange:
     enabled: false
     hostname: "https://<provider-pcf-exchange-api>"
+    # -- When true, both PCF versions (v7.0.0 and v9.0.0) must be uploaded
+    # -- for a manufacturer part before it can be published or exchanged.
+    # -- Each flow type can be toggled independently.
+    requireBothVersions:
+      synchronous: false
+      asynchronous: false
     asset_config:
-      dct_type: "cx-taxo:PcfExchange"
-      # existing_asset_id: <pcf-exchange-asset> # -- In case an existing PCF Exchange asset wants to be used specify here the id, otherwise it will be created based on the url, if it not exists it will be created
+      dct_type: "cx-taxo:PCFExchange"
+      # existing_asset_id: <pcf-exchange-asset> # -- In case an existing PCF Exchange asset (v1.2.0) wants to be used specify here the id, otherwise it will be created based on the url, if it not exists it will be created
+      # existing_legacy_asset_id: <pcf-exchange-legacy-asset> # -- In case an existing PCF Exchange asset (v1.1.1 /productIds) wants to be used specify here the id
     policy:
       usage:
         context:
@@ -669,3 +718,33 @@ provider:
       timeout: 30
       # -- SSL certificate verification
       verify_ssl: true
+
+# -- Add-on KIT configuration
+addons:
+  # -- MCP Addon: exposes IC-Hub dataspace capabilities as MCP tools for AI clients
+  # -- (Claude Desktop, Microsoft Copilot Studio, custom agents).
+  mcp_addon:
+    # -- Set to true to mount the FastMCP server at mount_path.
+    enabled: true
+    # -- Set to true to enable OAuth 2.0 (Keycloak) authentication for the MCP endpoint.
+    # -- When false, only the API-key Bearer fallback is used (or no auth if authorization.enabled is false).
+    oauth_enabled: true
+    # -- ASGI mount path for the FastMCP streamable-HTTP transport.
+    mount_path: /addons/mcp-addon/mcp
+    # -- When true, write tools return a preview on the first call and execute
+    # -- only on a second call with identical arguments.
+    require_confirmation_for_writes: true
+    # -- Idle TTL for in-process MCP sessions (seconds).
+    session_ttl_seconds: 7200
+    # -- Interval between idle-session eviction sweeps (seconds).
+    session_eviction_interval_seconds: 300
+    # -- Maximum number of staged write-tool previews retained per session.
+    # -- Oldest entries (by insertion order) are evicted when the cap is exceeded.
+    # -- This bounds memory when a client previews many distinct write calls
+    # -- without ever confirming them (each coexists in pending_confirmations).
+    max_pending_confirmations: 50
+    audit:
+      # -- Expose GET /addons/mcp-addon/audit .
+      # -- Disabled by default: this endpoint returns cross-user audit data.
+      # -- Enable only after adding appropriate role-based access controls.
+      expose_admin_endpoint: false
